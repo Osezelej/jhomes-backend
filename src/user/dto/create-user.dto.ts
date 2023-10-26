@@ -1,8 +1,7 @@
 import { IsAlphanumeric, IsEmail, IsPhoneNumber, IsStrongPassword, MinLength } from "class-validator";
 
 export class CreateUserDto {
-          id:string;
-          
+
           @IsAlphanumeric()
           @MinLength(5)
           username:string;
@@ -10,11 +9,13 @@ export class CreateUserDto {
           @IsEmail()
           email:string;
 
-          @IsPhoneNumber('NG')
+          @IsPhoneNumber('NG')          
           phoneNumber:string;
 
           @IsStrongPassword()
           password:string;
+
+          
 }
 
 export class LoginUserDto{

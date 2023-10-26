@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/create-user.dto';
-
+import { User } from './entities/user.entity';
+import {v4 as uuid} from 'uuid';
 @Injectable()
 export class UserService {
-  userData:CreateUserDto[]
+  userData:User[]
   constructor(){
     this.userData = [
      {
@@ -33,9 +34,13 @@ export class UserService {
   }
   
   create(createUserDto: CreateUserDto) {
-    
-    this.userData.push(createUserDto);
-    return this.userData;
+    let data:User = {
+      id:uuid(),
+      ...createUserDto
+    }
+    this.userData.push(data);
+    let {password, ...result} = data;
+    return result;
   }
 
   findOne(loginUserDto:LoginUserDto) {

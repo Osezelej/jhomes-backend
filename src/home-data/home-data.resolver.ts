@@ -9,7 +9,7 @@ export class HomeDataResolver {
   constructor(private readonly homeDataService: HomeDataService) {}
 
   @Mutation(() => HomeData)
-  createHome(@Args('createHomeDataInput') createHomeDataInput: CreateHomeDataInput) {
+  createHome(@Args('createHomeDataInput') createHomeDataInput: CreateHomeDataInput) { 
     return this.homeDataService.create(createHomeDataInput);
   }
 

@@ -9,7 +9,8 @@ const cStorage = diskStorage({
     callback(null, './src/home-image/assets')
   },
   filename(req, file, callback) {
-    return callback(null, file.originalname)
+    console.log(req.query)
+    return callback(null,  req.query.agentid + '_' + file.originalname)
   },
 })
 
@@ -18,11 +19,12 @@ export class HomeImageController {
   constructor(private readonly homeImageService: HomeImageService) {}
    
   @UseInterceptors(FileFieldsInterceptor([
-    {maxCount:20, name:'bedRoom', },
+    {maxCount:20, name:"bedRoom" },
     {maxCount:20, name:"bathRoom"},
     {maxCount:20, name:"toilet"},
     {maxCount:20, name:"sittingRoom"},
-    {maxCount:20, name:"dinningRoom"}
+    {maxCount:20, name:"dinningRoom"},
+    {maxCount:20, name:"kitchen"}
   ], {
     storage:cStorage,
   }))
@@ -33,10 +35,11 @@ export class HomeImageController {
       bathRoom?:Express.Multer.File[] ,
       toilet?:Express.Multer.File[],
       sittingRoom?:Express.Multer.File[],
-      dinningRoom?:Express.Multer.File[]
+      dinningRoom?:Express.Multer.File[],
+      kitchen?:Express.Multer.File[],
     } ,
      @Body() Body) {
-      console.log(file)
+      // console.log(file)
   }
 
 

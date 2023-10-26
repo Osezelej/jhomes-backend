@@ -52,7 +52,6 @@ export class HomeDescriptionInput{
 @InputType()
 export class HomePriceInput{
             
- 
   @Field()
   homePriceYear:string;
 
@@ -73,5 +72,8 @@ export class CreateHomeDataInput {
 
           @Field()
           homePrice:HomePriceInput;
+
+          @Field(()=>[String])
+          homeImage:string[];
 }
 

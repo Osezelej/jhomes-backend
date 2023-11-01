@@ -1,11 +1,22 @@
-export class User {
-          id:String;
+import {Entity, PrimaryColumn, Column, ObjectIdColumn} from 'typeorm';
 
-          username:String;
+@Entity({synchronize:true})
+export class JhomeAgent {
+          @ObjectIdColumn()
+          _id:string;
 
-          password:String;
+          @PrimaryColumn({type:'string', nullable:false})          
+          id:string;
+
+          @PrimaryColumn({type:'string', nullable:false})
+          username:string;
+
+          @Column({type:'string', nullable:false})
+          password:string;
           
-          email:String;
+          @PrimaryColumn({type:'string', nullable:false})
+          email:string;
 
-          phoneNumber:String;
+          @Column({type:'string', nullable:false})
+          phoneNumber:string;
 }

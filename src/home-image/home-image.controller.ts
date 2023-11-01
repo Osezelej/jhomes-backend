@@ -3,10 +3,11 @@ import { HomeImageService } from './home-image.service';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
-
+import { join } from 'path';
+console.log()
 const cStorage = diskStorage({
   destination(req, file, callback) {
-    callback(null, './src/home-image/assets')
+    callback(null,  join(__dirname, '..', '..', 'src', 'home-image', 'assets'))
   },
   filename(req, file, callback) {
     console.log(req.query)

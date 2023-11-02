@@ -2,22 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { CreateHomeDataInput } from './dto/create-home-datum.input';
 import { HomeData } from './entities/home-datum.entity';
 import {v4 as uuid} from 'uuid'
+import { InjectRepository } from '@nestjs/typeorm';
+import { HomeData as HomeEntity } from './entities/home.entites';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class HomeDataService {
   homeData:HomeData[];
 
-  constructor(){
-    this.homeData = [];
-  }
+  constructor(@InjectRepository(HomeEntity) private homeDataRepository:Repository<HomeEntity>,){}
+  
 
-  create(createHomeDataInput: CreateHomeDataInput):HomeData {
+  async create(createHomeDataInput: CreateHomeDataInput):Promise<HomeData> {
     let dataId = uuid();
     let data:HomeData = {
       id:dataId,
+      agentId:createHomeDataInput.agentId,
       homeAddress:{
         id:dataId,
-        agentId:createHomeDataInput.agentId,
         country:createHomeDataInput.homeAddress.country,
         state:createHomeDataInput.homeAddress.state,
         lga:createHomeDataInput.homeAddress.lga,
@@ -25,7 +27,6 @@ export class HomeDataService {
       },
       homeDesc:{
         id:dataId,
-        agentId:createHomeDataInput.agentId,
         bedroom:createHomeDataInput.homeDescription.bedroom,
         bathroom:createHomeDataInput.homeDescription.bathroom,
         toilet:createHomeDataInput.homeDescription.toilet,
@@ -38,32 +39,31 @@ export class HomeDataService {
       },
       homePrice:{
         id:dataId,
-        agentId:createHomeDataInput.agentId,
         homePriceYear:createHomeDataInput.homePrice.homePriceYear,
         homePriceMonth:createHomeDataInput.homePrice.homePriceMonth
-      }
-
+      },
+      homeImage: [...createHomeDataInput.homeImage]
     }
-    this.homeData.push(data)
-    return data;
+    let savedHomeData =  this.homeDataRepository.create(data);
+
+    return await this.homeDataRepository.save(savedHomeData);
   }
 
-  findAll(agentId:string):HomeData[] {
-    return this.homeData.filter((value)=>{
-      return value.homePrice.agentId === agentId;
-    });
-  }
-
-  findOne(homeid: string):HomeData {
-    return this.homeData.find((value)=>{
-      return value.id === homeid;
+  async findAll(agentId:string):Promise<HomeData[]> {
+    return await this.homeDataRepository.find({
+      where:{
+        agentId,
+      }
     })
-    
+  }
+
+  async findOne(homeid: string):Promise<HomeData> {
+   return await this.homeDataRepository.findOneBy({id:homeid});
   }
 
 
-  getAlldata():HomeData[]{
-    return this.homeData;
+  async getAlldata():Promise<HomeData[]>{
+    return await this.homeDataRepository.find();
   }
 
   filterandgetHomeData(userSearchParams:string){

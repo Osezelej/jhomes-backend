@@ -5,14 +5,12 @@ import { HomeDataService } from 'src/home-data/home-data.service';
 @Injectable()
 export class HomeAgentService {
   constructor(private readonly HomeDataService:HomeDataService){}
-  findAll(agentId:string):HomeData[] {
-    return this.HomeDataService.homeData.filter((value)=>{
-      return value.homeAddress.agentId === agentId;
-    })
+  async findAll(agentId:string):Promise<HomeData[]> {
+   return await this.HomeDataService.findAll(agentId)
   }
 
-  findOne(homeid: string):HomeData {
-    return this.HomeDataService.findOne(homeid);
+  async findOne(homeid: string):Promise<HomeData> {
+    return await this.HomeDataService.findOne(homeid);
   }
 
  

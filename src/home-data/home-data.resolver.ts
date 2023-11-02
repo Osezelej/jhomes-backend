@@ -10,6 +10,7 @@ export class HomeDataResolver {
 
   @Mutation(() => HomeData)
   createHome(@Args('createHomeDataInput') createHomeDataInput: CreateHomeDataInput) { 
+    console.log(createHomeDataInput);
     return this.homeDataService.create(createHomeDataInput);
   }
 

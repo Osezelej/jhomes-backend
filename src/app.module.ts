@@ -11,6 +11,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {JhomeAgent as UserEntity } from './user/entities/user.entity';
+import { HomeData } from './home-data/entities/home.entites';
 @Module({
   imports: [
     UserModule, 
@@ -38,7 +39,7 @@ import {JhomeAgent as UserEntity } from './user/entities/user.entity';
   TypeOrmModule.forRoot({
     type:'mongodb',
     url:'mongodb+srv://osezelejoseph:7bKIQUXHBfa6ACT1@cluster0.7uwgrbb.mongodb.net/?retryWrites=true&w=majority',
-    entities:[UserEntity],
+    entities:[UserEntity, HomeData],
     synchronize:true,
     useUnifiedTopology:true
   })

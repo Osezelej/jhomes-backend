@@ -5,9 +5,6 @@ export class HomeAddress{
   @Field(of=>ID)
   id:string;
 
-  @Field(of=>ID)
-  agentId:string;
-  
   @Field()
   streetName:string;
 
@@ -26,9 +23,6 @@ export class HomeDescription{
   @Field(of=>ID)
   id:string;
 
-  @Field(of=>ID)
-  agentId:string;
-  
   @Field(of=>Int)
   bedroom:number;
 
@@ -63,9 +57,7 @@ export class HomePrice{
   @Field(of=>ID)
   id:string;
 
-  @Field(of=>ID)
-  agentId:string;
-  
+ 
   @Field()
   homePriceYear:string;
 
@@ -78,6 +70,9 @@ export class HomeData {
   @Field(of =>ID)
   id:string;
 
+  @Field(of=>ID)
+  agentId:string;
+  
   @Field()
   homeDesc:HomeDescription;
 
@@ -86,6 +81,9 @@ export class HomeData {
 
   @Field()
   homePrice:HomePrice;
-
+  
+  @Field(()=>[String])
+  homeImage:string[];
 }
+
 

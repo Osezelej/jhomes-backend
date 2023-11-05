@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('/api/v1/user')
@@ -10,6 +10,10 @@ export class UserController {
   @Post()
   createAgent(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+  @Post('/login')
+  findAgent(@Body() agentLogin:LoginUserDto){
+    return this.userService.findOne(agentLogin);
   }
 
   @Patch(':id')

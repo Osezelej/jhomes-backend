@@ -75,12 +75,19 @@ export class UserService {
   }
 
   async findOne(loginUserDto:LoginUserDto) {
-    let {password, ...result} = await this.UserRepository.findOneBy({username:loginUserDto.username});
-  
-    if (result){  
-      let isValid = await bcrypt.compare(password, loginUserDto.password);
+    let data = await this.UserRepository.findOneBy({phoneNumber:loginUserDto.phoneNumber});
+    
+    if (data){  
+      let isValid = await bcrypt.compare(loginUserDto.password, data.password);
+      console.log(isValid)
       if(isValid){
-        return result
+        let returnData = {
+          email: data.email,
+          id:data.id,
+          username:data.username,
+          phoneNumber:data.phoneNumber,
+        }
+        return returnData;
       }else{
         throw new HttpException('user not found', 404)
       }

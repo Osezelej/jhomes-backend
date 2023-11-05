@@ -19,9 +19,8 @@ export class CreateUserDto {
 }
 
 export class LoginUserDto{
-          @IsAlphanumeric()
-          @MinLength(5)
-          username:string;
+          @IsPhoneNumber()
+          phoneNumber:string;
 
           @IsStrongPassword()
           password:string;

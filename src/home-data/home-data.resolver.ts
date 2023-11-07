@@ -4,6 +4,7 @@ import { HomeData } from './entities/home-datum.entity';
 import { CreateHomeDataInput } from './dto/create-home-datum.input';
 
 
+
 @Resolver(() => HomeData)
 export class HomeDataResolver {
   constructor(private readonly homeDataService: HomeDataService) {}
@@ -13,6 +14,7 @@ export class HomeDataResolver {
     console.log(createHomeDataInput);
     return this.homeDataService.create(createHomeDataInput);
   }
+
 
 
   @Query(()=>HomeData)

@@ -49,12 +49,37 @@ export class HomeDataService {
     return await this.homeDataRepository.save(savedHomeData);
   }
 
-  async findAll(agentId:string):Promise<HomeData[]> {
-    return await this.homeDataRepository.find({
-      where:{
-        agentId,
+  async findAll(agentId:string, skip:number):Promise<HomeData[]> {
+    let numberofHomes = await this.homeDataRepository.count({where:{
+      agentId
+    }});
+
+    if (skip === 1){
+      return await this.homeDataRepository.find({
+        take:10,
+        where:{
+          agentId,
+        }
+      })
+    }else{
+      if(numberofHomes > 10){
+        return await this.homeDataRepository.find({
+          skip: 10 * skip,
+          take: 10,
+          where:{
+            agentId,
+          }
+        })
+      }else{
+        return await this.homeDataRepository.find({
+          take:10,
+          where:{
+            agentId,
+          }
+        })
       }
-    })
+    
+    }
   }
 
   async findOne(homeid: string):Promise<HomeData> {

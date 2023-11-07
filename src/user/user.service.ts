@@ -96,7 +96,7 @@ export class UserService {
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUsermDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 

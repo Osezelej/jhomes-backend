@@ -6,7 +6,7 @@ import {JhomeAgent as UserEntity } from './entities/user.entity';
 @Module({
   controllers: [UserController],
   providers: [UserService],
-  exports:[UserModule],
+  exports:[UserService],
   imports:[
     TypeOrmModule.forFeature([UserEntity])
   ]

@@ -7,6 +7,7 @@ import {v4 as uuid} from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(UserEntity) private UserRepository:Repository<UserEntity>){}
@@ -98,6 +99,15 @@ export class UserService {
 
   update(id: number, updateUsermDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
+  }
+
+  async findByagentid(agentid:string){
+    let {password, _id, ...result} = await this.UserRepository.findOneBy({id:agentid});
+    if(result){
+      return result
+    }else{
+      throw new HttpException('user not found', 404)
+    }
   }
 
 }

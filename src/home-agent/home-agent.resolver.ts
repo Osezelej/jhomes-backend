@@ -3,6 +3,7 @@ import { HomeAgentService } from './home-agent.service';
 import { HomeAgent } from './entities/home-agent.entity';
 import { HomeData } from 'src/home-data/entities/home-datum.entity';
 
+
 @Resolver(() => HomeAgent)
 export class HomeAgentResolver {
   constructor(private readonly homeAgentService: HomeAgentService) {}
@@ -13,9 +14,13 @@ export class HomeAgentResolver {
     return this.homeAgentService.findAll(agentid, skip);
   }
 
+  @Query(()=>HomeAgent)
+  findoneAgent(@Args('agentid') agentid:string){
+    return this.homeAgentService.findOneAgent(agentid)
+  }
 
-  @Query(() => HomeAgent, { name: 'homeAgent' })
-  findOne(@Args('homeid') homeid:string) {
+  @Query(() => HomeData, { name: 'homeAgent' })
+  findOneAgentHome(@Args('homeid') homeid:string) {
     return this.homeAgentService.findOne(homeid);
   }
 

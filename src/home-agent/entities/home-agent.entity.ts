@@ -1,7 +1,17 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType()
 export class HomeAgent {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field(()=>ID)  
+  id:string;
+
+  @Field()
+  username:string;
+
+  @Field()
+  email:string;
+
+  @Field()
+  phoneNumber:string;
+  
 }

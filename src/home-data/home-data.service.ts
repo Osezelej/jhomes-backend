@@ -1,16 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateHomeDataInput } from './dto/create-home-datum.input';
 import { HomeData } from './entities/home-datum.entity';
 import {v4 as uuid} from 'uuid'
 import { InjectRepository } from '@nestjs/typeorm';
 import { HomeData as HomeEntity } from './entities/home.entites';
-import { Repository } from 'typeorm';
+import { Repository, } from 'typeorm';
+import { MongoClient } from 'mongodb';
+import { MongodbService } from 'src/home-data/mongo.service';
+
+// this is the response interface for this service.
+export interface homeCountData{
+  count:number,
+  homeData:HomeData[]
+
+}
 
 @Injectable()
 export class HomeDataService {
   homeData:HomeData[];
 
-  constructor(@InjectRepository(HomeEntity) private homeDataRepository:Repository<HomeEntity>,){}
+  constructor(@InjectRepository(HomeEntity) private homeDataRepository:Repository<HomeEntity>, private readonly mongodbService:MongodbService){}
   
 
   async create(createHomeDataInput: CreateHomeDataInput):Promise<HomeData> {
@@ -48,37 +57,23 @@ export class HomeDataService {
 
     return await this.homeDataRepository.save(savedHomeData);
   }
-
-  async findAll(agentId:string, skip:number):Promise<HomeData[]> {
-    let numberofHomes = await this.homeDataRepository.count({where:{
+ 
+  async findAll(agentId:string, skip:number):Promise<homeCountData> {
+    console.log(agentId)
+    let [items, numberofHomes] = await this.homeDataRepository.findAndCount({where:{
       agentId
     }});
-
-    if (skip === 1){
-      return await this.homeDataRepository.find({
-        take:10,
-        where:{
-          agentId,
-        }
-      })
-    }else{
-      if(numberofHomes > 10){
-        return await this.homeDataRepository.find({
-          skip: 10 * skip,
-          take: 10,
-          where:{
-            agentId,
-          }
-        })
-      }else{
-        return await this.homeDataRepository.find({
-          take:10,
-          where:{
-            agentId,
-          }
-        })
+    console.log(numberofHomes);
+    let data = await this.homeDataRepository.find({
+      skip: 10 *skip - 1,
+      take:10,
+      where:{
+        agentId,
       }
-    }
+    })
+    let returnData:homeCountData = {count:numberofHomes, homeData:data}
+    return returnData;
+
   }
 
   async findOne(homeid: string):Promise<HomeData> {
@@ -86,45 +81,66 @@ export class HomeDataService {
   }
 
 
-  async getAlldata():Promise<HomeData[]>{
-    return await this.homeDataRepository.find();
+  async getAlldata(skip:number):Promise<homeCountData>{
+    let numberofHomes = await this.homeDataRepository.count({});
+    return {count:numberofHomes, homeData:await this.homeDataRepository.find({
+      take:10,
+      skip:10 * (skip - 1)
+    })} 
   }
 
-  filterandgetHomeData(userSearchParams:string){
-    let addressData = this.homeData.filter((value)=>{
-      return (
-          value.homeAddress.country.toLowerCase().includes(userSearchParams.toLowerCase()) 
-        || value.homeAddress.lga.toLowerCase().includes(userSearchParams.toLowerCase()) 
-        || value.homeAddress.state.toLowerCase().includes(userSearchParams.toLowerCase())  
-        || value.homeAddress.streetName.toLowerCase().includes(userSearchParams.toLowerCase()) 
-      );
-    })
+  // async mongodbConnection(uri:string, text:object){
+  //   const client = new MongoClient(uri
+  //   );
+  //   try{
+  //     await client.connect();
+  //     const mydb = client.db('test');
+      
+  //     const col = mydb.collection('home_data');
+  //     return await col.find(text).toArray()
+  //   }catch(e){
+  //     console.log(e)
+  //     throw new HttpException('server error', 500)
+  //   }
+  // }
 
-    let descriptionData = this.homeData.filter((value)=>{
-      return (
-          value.homeDesc.bathroom.toString().toLowerCase().includes(userSearchParams.toLowerCase()) 
-        || value.homeDesc.bedroom.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.toilet.toString().toLowerCase().includes(userSearchParams.toLowerCase())  
-        || value.homeDesc.dinningroom.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.homeType.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.kitchen.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.saleType.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.sittingroom.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-        || value.homeDesc.others.toString().toLowerCase().includes(userSearchParams.toLowerCase())
-      );
-    })
-
-    let priceData = this.homeData.filter((value)=>{
-      return (
-          value.homePrice.homePriceMonth.toLowerCase().includes(userSearchParams.toLowerCase()) 
-        ||  value.homePrice.homePriceYear.toLowerCase().includes(userSearchParams.toLowerCase()) 
-      );
-    })
-
-    let result = [...addressData, ...descriptionData, ...priceData];
+  searchExist(data:any, items:any, from:boolean){
     
-    return result;
+    for (let item of items){
+      let d = data.find((value)=>{
+         return value.id == item.id;
+       })
+       if (d!=undefined){
+         continue;
+       }else{
+         data.push(item);
+       }
+     }
+     return data;
   }
+  async searchHome(city:string, state:string, skip:number){
+    let data = [];
+    if(city.length > 0 && data.length < 10){
+      
+      let search_city:any = await this.mongodbService.searchDocument(city, skip);
+    
+      data = this.searchExist(data, search_city, true);
+      }
+      if(data.length < 10){
+        console.log(data)
+        let search_state:any = await this.mongodbService.searchDocument(state, skip);
+        data = this.searchExist(data, search_state, false);
+      }
+  
+
+    let otheResult:homeCountData = await this.getAlldata(skip);
+    if (data.length < 10){
+      data = this.searchExist(data, otheResult.homeData, true);
+    }
+    
+     return {count:otheResult.count, homeData:data};
+  }
+
 
   remove(homeId:string, agentId:string):string {
     try {

@@ -12,6 +12,7 @@ import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {JhomeAgent as UserEntity } from './user/entities/user.entity';
 import { HomeData } from './home-data/entities/home.entites';
+import { MongodbService } from './home-data/mongo.service';
 @Module({
   imports: [
     UserModule, 

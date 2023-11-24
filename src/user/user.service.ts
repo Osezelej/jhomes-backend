@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(@InjectRepository(UserEntity) private UserRepository:Repository<UserEntity>){}
 
+
   async findByUsername(username){
     let findbyusername = await this.UserRepository.findOneBy({ username,});
     return findbyusername;

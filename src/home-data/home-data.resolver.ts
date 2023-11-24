@@ -1,8 +1,7 @@
 import { Resolver, Mutation, Args, Query,} from '@nestjs/graphql';
 import { HomeDataService } from './home-data.service';
-import { HomeData } from './entities/home-datum.entity';
+import { HomeCountdata, HomeData } from './entities/home-datum.entity';
 import { CreateHomeDataInput } from './dto/create-home-datum.input';
-
 
 
 @Resolver(() => HomeData)
@@ -23,14 +22,13 @@ export class HomeDataResolver {
   }
 
 
-  @Query(()=>[HomeData])
-  getAllHomeData(){
-    return this.homeDataService.getAlldata();
+  @Query(()=>HomeCountdata)
+  getAllHomeData(@Args('skip')skip:number){
+    return this.homeDataService.getAlldata(skip);
   }
-
-  @Query(()=>[HomeData])
-  findNGetHomes(@Args('userSearchParams')search: string){
-    this.homeDataService.filterandgetHomeData(search);
+  @Query(()=>HomeCountdata)
+  async getHomeonLocation(@Args('city')city:string, @Args('state')state:string, @Args('skip')skip:number){
+    return await this.homeDataService.searchHome(city, state, skip);
   }
 
 }

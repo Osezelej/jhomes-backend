@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { HomeData } from 'src/home-data/entities/home-datum.entity';
-import { HomeDataService } from 'src/home-data/home-data.service';
+import { HomeDataService, homeCountData } from 'src/home-data/home-data.service';
 import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
 export class HomeAgentService {
   constructor(private readonly HomeDataService:HomeDataService, private readonly UserService:UserService){}
-  async findAll(agentId:string, skip:number):Promise<HomeData[]> {
+  async findAll(agentId:string, skip:number):Promise<homeCountData> {
    return await this.HomeDataService.findAll(agentId, skip);
   }
 

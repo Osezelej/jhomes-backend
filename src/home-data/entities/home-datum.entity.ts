@@ -86,4 +86,13 @@ export class HomeData {
   homeImage:string[];
 }
 
+@ObjectType()
+export class HomeCountdata{
+  @Field(()=>Int)
+  count:number;
 
+  @Field(()=>[HomeData])
+  homeData:HomeData[];
+
+
+}

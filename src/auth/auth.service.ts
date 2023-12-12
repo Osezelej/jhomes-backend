@@ -17,12 +17,9 @@ export class AuthService{
     }
 
     async registerUser(user:any){
-        if(user.email == null){
-            
-            throw new HttpException('no email was found', 400)
-        }
+        
         try{
-            let verifyUserExist = await this.findUser(user.email);
+            let verifyUserExist = await this.findUser(user.Id);
             if(verifyUserExist){
                 return user
             }

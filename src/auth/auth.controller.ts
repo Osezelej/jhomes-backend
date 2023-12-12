@@ -1,5 +1,4 @@
 import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
-import { GoogleAuthGuard } from "./Guards";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { Response } from "express";
@@ -30,9 +29,11 @@ export class AuthController{
     }
     @Get('facebook/redirect')
     @UseGuards(AuthGuard('facebook'))
-    async handleFaceBookRegister(@Req() req:any){
-        console.log(req.user)
-        return await this.AuthService.registerUser(req.user);
+    async handleFaceBookRegister(@Req() req:any, @Res() res:Response){
+        console.log(req.user);
+        let userData = await this.AuthService.registerUser(req.user);
+        res.redirect('http://localhost:3000?userid='+userData.Id + '&name='+userData.name)
+        
     }
 
 

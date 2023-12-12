@@ -65,7 +65,7 @@ export class HomeDataService {
     }});
     console.log(numberofHomes);
     let data = await this.homeDataRepository.find({
-      skip: 10 *skip - 1,
+      skip: 10 *(skip - 1),
       take:10,
       where:{
         agentId,
@@ -89,20 +89,6 @@ export class HomeDataService {
     })} 
   }
 
-  // async mongodbConnection(uri:string, text:object){
-  //   const client = new MongoClient(uri
-  //   );
-  //   try{
-  //     await client.connect();
-  //     const mydb = client.db('test');
-      
-  //     const col = mydb.collection('home_data');
-  //     return await col.find(text).toArray()
-  //   }catch(e){
-  //     console.log(e)
-  //     throw new HttpException('server error', 500)
-  //   }
-  // }
 
   searchExist(data:any, items:any, from:boolean){
     
@@ -118,18 +104,17 @@ export class HomeDataService {
      }
      return data;
   }
+
   async searchHome(city:string, state:string, skip:number){
     let data = [];
     if(city.length > 0 && data.length < 10){
-      
       let search_city:any = await this.mongodbService.searchDocument(city, skip);
-    
       data = this.searchExist(data, search_city, true);
       }
-      if(data.length < 10){
+      if(data.length < 10 && state.length > 0){
         console.log(data)
         let search_state:any = await this.mongodbService.searchDocument(state, skip);
-        data = this.searchExist(data, search_state, false);
+         data = this.searchExist(data, search_state, false);
       }
   
 
@@ -141,6 +126,7 @@ export class HomeDataService {
      return {count:otheResult.count, homeData:data};
   }
 
+  
 
   remove(homeId:string, agentId:string):string {
     try {

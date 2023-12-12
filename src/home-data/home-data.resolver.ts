@@ -21,6 +21,11 @@ export class HomeDataResolver {
     return this.homeDataService.findOne(homeid);
   }
 
+  @Query(()=>HomeCountdata)
+  async searchHome(@Args('data')data:string, @Args('skip')skip:number){
+    return await this.homeDataService.searchHome(data, '', skip); 
+  }
+
 
   @Query(()=>HomeCountdata)
   getAllHomeData(@Args('skip')skip:number){
